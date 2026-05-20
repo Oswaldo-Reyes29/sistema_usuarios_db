@@ -1,0 +1,10 @@
+{
+    "name": "sistema/api-usuarios",
+    "description": "API para sistema de usuarios en Clever Cloud",
+    "require": {
+        "php": ">=7.4"
+    },
+    "scripts": {
+        "start": "php -S 0.0.0.0:8080"
+    }
+}

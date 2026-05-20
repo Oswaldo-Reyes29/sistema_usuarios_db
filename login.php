@@ -4,23 +4,25 @@ require_once 'config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
-// Solo aceptar método POST
+if (!$db) exit();
+
+// Solo aceptar POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    sendResponse(false, "Método no permitido. Use POST.");
+    $database->sendResponse(false, "Método no permitido. Use POST.");
 }
 
-// Obtener datos
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (!$data || empty($data['username']) || empty($data['password'])) {
-    sendResponse(false, "Usuario y contraseña son obligatorios");
+    $database->sendResponse(false, "Usuario y contraseña son obligatorios");
 }
 
 $username = $data['username'];
 $password = $data['password'];
 
 try {
-    $query = "SELECT id, username, password, nombre_completo, email, telefono, cargo, departamento_id, estado 
+    $query = "SELECT id, username, password, nombre_completo, email, telefono, 
+                     cargo, departamento_id, estado, fecha_creacion 
               FROM usuarios_mysql 
               WHERE username = :username";
     
@@ -33,23 +35,23 @@ try {
     if ($usuario) {
         // Verificar contraseña
         if (password_verify($password, $usuario['password'])) {
-            // Verificar estado del usuario (1 = Activo)
+            // Verificar estado (1 = Activo)
             if ($usuario['estado'] != 1) {
-                sendResponse(false, "Usuario inactivo. Contacte al administrador.");
+                $database->sendResponse(false, "Usuario inactivo. Contacte al administrador.");
             }
             
-            // Eliminar contraseña antes de enviar
+            // Eliminar contraseña por seguridad
             unset($usuario['password']);
             
-            sendResponse(true, "Login exitoso", $usuario);
+            $database->sendResponse(true, "Login exitoso", $usuario);
         } else {
-            sendResponse(false, "Contraseña incorrecta");
+            $database->sendResponse(false, "Contraseña incorrecta");
         }
     } else {
-        sendResponse(false, "Usuario no encontrado");
+        $database->sendResponse(false, "Usuario no encontrado");
     }
     
 } catch (PDOException $e) {
-    sendResponse(false, "Error en la base de datos: " . $e->getMessage());
+    $database->sendResponse(false, "Error: " . $e->getMessage());
 }
 ?>

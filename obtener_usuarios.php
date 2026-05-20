@@ -4,13 +4,16 @@ require_once 'config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
-// Solo aceptar método GET
+if (!$db) exit();
+
+// Solo aceptar GET
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-    sendResponse(false, "Método no permitido. Use GET.");
+    $database->sendResponse(false, "Método no permitido. Use GET.");
 }
 
 try {
-    $query = "SELECT u.*, d.nombre as departamento_nombre 
+    $query = "SELECT u.id, u.username, u.nombre_completo, u.email, u.telefono, 
+                     u.cargo, u.estado, u.fecha_creacion, d.nombre as departamento_nombre 
               FROM usuarios_mysql u
               LEFT JOIN departamentos d ON u.departamento_id = d.id
               ORDER BY u.fecha_creacion DESC";
@@ -20,14 +23,12 @@ try {
     
     $usuarios = [];
     while ($row = $stmt->fetch()) {
-        // No incluir la contraseña
-        unset($row['password']);
         $usuarios[] = $row;
     }
     
-    sendResponse(true, "Usuarios cargados correctamente", $usuarios);
+    $database->sendResponse(true, "Usuarios cargados correctamente", $usuarios);
     
 } catch (PDOException $e) {
-    sendResponse(false, "Error al cargar usuarios: " . $e->getMessage());
+    $database->sendResponse(false, "Error al cargar usuarios: " . $e->getMessage());
 }
 ?>
