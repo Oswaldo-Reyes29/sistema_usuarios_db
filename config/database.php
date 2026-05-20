@@ -29,10 +29,10 @@ class Database {
         
         // Para desarrollo local (XAMPP/WAMP)
         if (empty($this->host)) {
-            $this->host = 'b45fsejayvzm3i8imnix-mysql.services.clever-cloud.com';
-            $this->db_name = 'b45fsejayvzm3i8imnix';
-            $this->username = 'uleraydl9f4abjbx';
-            $this->password = 'kDvnTrpGHvnDbH5McuRY';
+            $this->host = 'bzqiuypvgpeekyhro2mx-mysql.services.clever-cloud.com';
+            $this->db_name = 'bzqiuypvgpeekyhro2mx';
+            $this->username = 'uulk6nbtywpvi5dn';
+            $this->password = 'AGiQxEOKSpASCu438cPz';
             $this->port = '3306';
         }
     }
